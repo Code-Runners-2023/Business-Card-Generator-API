@@ -1,4 +1,6 @@
 ﻿using BusinessCardGenerator.API.Models;
+using BusinessCardGenerator.API.Services;
+using BusinessCardGenerator.API.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BusinessCardGenerator.API.Controllers
@@ -7,6 +9,13 @@ namespace BusinessCardGenerator.API.Controllers
     [Route("users")]
     public class UserController : ControllerBase
     {
+        private readonly IUserService userService;
+
+        public UserController(IUserService userService)
+        {
+            this.userService = userService;
+        }
+
         [HttpGet]
         public IActionResult GetAllUsers()
         {
