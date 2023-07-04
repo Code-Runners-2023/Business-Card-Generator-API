@@ -1,5 +1,4 @@
-﻿using BusinessCardGenerator.API.Models;
-using BusinessCardGenerator.API.Services;
+﻿using BusinessCardGenerator.API.Data;
 using BusinessCardGenerator.API.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,22 +18,48 @@ namespace BusinessCardGenerator.API.Controllers
         [HttpGet]
         public IActionResult GetAllUsers()
         {
-            List<User> users = UsersDataStore.Current.Users;
-
+            List<User> users = userService.GetAll();
             return Ok(users);
         }
 
         [HttpGet("{id}")]
         public IActionResult GetUserById(int id)
         {
-            List<User> users = UsersDataStore.Current.Users;
+            User result = userService.GetById(id);
 
-            if (id < 0 || id >= users.Count)
+            if (result == null)
                 return NotFound();
 
-            User result = users.FirstOrDefault(u => u.Id == id);
-
             return Ok(result);
+        }
+
+        [HttpPost]
+        public IActionResult AddNewUser(User user)
+        {
+            if (!ModelState.IsValid || !userService.Add(user))
+                return BadRequest();
+
+            return NoContent();
+        }
+
+        [HttpPut]
+        public IActionResult UpdateUser(User user)
+        {
+            if (!ModelState.IsValid || !userService.Update(user))
+                return BadRequest();
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult RemoveUserById(int id)
+        {
+            User removed = userService.Remove(id);
+
+            if (removed == null)
+                return BadRequest();
+
+            return Ok(removed);
         }
     }
 }

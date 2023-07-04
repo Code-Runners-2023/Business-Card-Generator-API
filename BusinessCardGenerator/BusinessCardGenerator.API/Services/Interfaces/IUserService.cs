@@ -12,6 +12,6 @@ namespace BusinessCardGenerator.API.Services.Interfaces
 
         public bool Update(User user);
 
-        public bool Remove(int id);
+        public User Remove(int id);
     }
 }

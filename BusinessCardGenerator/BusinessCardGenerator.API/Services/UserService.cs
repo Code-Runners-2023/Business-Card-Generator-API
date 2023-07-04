@@ -40,17 +40,17 @@ namespace BusinessCardGenerator.API.Services
             return true;
         }
 
-        public bool Remove(int id)
+        public User Remove(int id)
         {
             User user = GetById(id);
 
             if (user == null)
-                return false;
+                return null;
 
             context.Users.Remove(user);
             context.SaveChanges();
 
-            return true;
+            return user;
         }
     }
 }
