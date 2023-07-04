@@ -1,10 +1,18 @@
+using BusinessCardGenerator.API.Data;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
+
+var connectionString =
+    builder.Configuration.GetConnectionString("ApplicationContextConnection") ??
+    throw new InvalidOperationException("Connection string 'ApplicationContextConnection' not found.");
 
 // Add services to the container.
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddDbContext<ApplicationContext>(c => c.UseNpgsql(connectionString));
 
 var app = builder.Build();
 

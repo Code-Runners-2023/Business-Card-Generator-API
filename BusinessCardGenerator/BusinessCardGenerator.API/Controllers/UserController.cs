@@ -5,7 +5,7 @@ namespace BusinessCardGenerator.API.Controllers
 {
     [ApiController]
     [Route("users")]
-    public class UsersController : ControllerBase
+    public class UserController : ControllerBase
     {
         [HttpGet]
         public IActionResult GetAllUsers()
