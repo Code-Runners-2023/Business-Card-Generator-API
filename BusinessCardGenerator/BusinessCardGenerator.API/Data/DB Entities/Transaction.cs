@@ -1,13 +1,16 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BusinessCardGenerator.API.Data
 {
     public class Transaction
     {
-        public int Id { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
 
         [ForeignKey(nameof(BusinessCard))]
-        public int BusinessCardId { get; set; }
+        public Guid BusinessCardId { get; set; }
 
         public BusinessCard BusinessCard { get; set; }
 

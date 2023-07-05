@@ -15,32 +15,22 @@ namespace BusinessCardGenerator.API.Services
         public List<User> GetAll()
             => context.Users.ToList();
 
-        public User GetById(int id)
+        public User GetById(Guid id)
             => context.Users.FirstOrDefault(user => user.Id == id);
 
-        public bool Add(User user)
+        public void Add(User user)
         {
-            if (user == null)
-                return false;
-
             context.Users.Add(user);
             context.SaveChanges();
-
-            return true;
         }
 
-        public bool Update(User user)
+        public void Update(User user)
         {
-            if (user == null)
-                return false;
-
             context.Users.Update(user);
             context.SaveChanges();
-
-            return true;
         }
 
-        public User Remove(int id)
+        public User Remove(Guid id)
         {
             User user = GetById(id);
 

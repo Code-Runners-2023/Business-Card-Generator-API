@@ -4,14 +4,14 @@ namespace BusinessCardGenerator.API.Services.Interfaces
 {
     public interface IUserService
     {
-        public List<User> GetAll();
+        List<User> GetAll();
 
-        public User GetById(int id);
+        User GetById(Guid id);
 
-        public bool Add(User user);
+        void Add(User user);
 
-        public bool Update(User user);
+        void Update(User user);
 
-        public User Remove(int id);
+        User Remove(Guid id);
     }
 }

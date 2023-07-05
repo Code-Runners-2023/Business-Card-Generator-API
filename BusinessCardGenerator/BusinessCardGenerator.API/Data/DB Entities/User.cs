@@ -1,11 +1,29 @@
+using BusinessCardGenerator.API.Models;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BusinessCardGenerator.API.Data
 {
     public class User
     {
-        public int Id { get; set; }
+        public User() { }
+
+        public User(UserInputModel input)
+        {
+            Id = Guid.NewGuid();
+            Balance = 0;
+
+            FirstName = input.FirstName;
+            LastName = input.LastName;
+            Email = input.Email;
+            Phone = input.Phone;
+            Password = input.Password;
+        }
+
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
 
         [StringLength(100, ErrorMessage = "Too long first name! Max length is 100 characters!")]
         public string FirstName { get; set; }

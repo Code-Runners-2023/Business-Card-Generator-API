@@ -1,4 +1,5 @@
 ﻿using BusinessCardGenerator.API.Data;
+using BusinessCardGenerator.API.Models;
 using BusinessCardGenerator.API.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,48 +19,55 @@ namespace BusinessCardGenerator.API.Controllers
         [HttpGet]
         public IActionResult GetAllUsers()
         {
-            List<User> users = userService.GetAll();
+            List<UserCompressedInfoModel> users = userService.GetAll()
+                                                             .Select(user => new UserCompressedInfoModel(user))
+                                                             .ToList();
+
             return Ok(users);
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetUserById(int id)
+        public IActionResult GetUserById(Guid id)
         {
             User result = userService.GetById(id);
 
             if (result == null)
                 return NotFound();
 
-            return Ok(result);
+            return Ok(new UserCompressedInfoModel(result));
         }
 
         [HttpPost]
-        public IActionResult AddNewUser(User user)
+        public IActionResult AddNewUser(UserInputModel userInput)
         {
-            if (!ModelState.IsValid || !userService.Add(user))
+            if (!ModelState.IsValid)
                 return BadRequest();
+
+            userService.Add(new User(userInput));
 
             return NoContent();
         }
 
-        [HttpPut]
-        public IActionResult UpdateUser(User user)
+        [HttpPatch]
+        public IActionResult UpdateUser(UserInputModel userInput)
         {
-            if (!ModelState.IsValid || !userService.Update(user))
+            if (!ModelState.IsValid)
                 return BadRequest();
+
+            userService.Update(new User(userInput));
 
             return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public IActionResult RemoveUserById(int id)
+        public IActionResult RemoveUserById(Guid id)
         {
             User removed = userService.Remove(id);
 
             if (removed == null)
                 return BadRequest();
 
-            return Ok(removed);
+            return Ok(new UserCompressedInfoModel(removed));
         }
     }
 }
