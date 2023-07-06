@@ -9,9 +9,13 @@ namespace BusinessCardGenerator.API.Services.Interfaces
 
         User GetById(Guid id);
 
+        User GetByEmail(string email);
+
         User GetByEmailAndPassword(string email, string password);
 
         bool VerifyLogin(UserLoginModel login);
+
+        bool IsUserRegisteredWithEmail(string email);
 
         void Add(User user);
 

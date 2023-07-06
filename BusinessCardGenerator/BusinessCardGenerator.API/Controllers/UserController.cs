@@ -37,11 +37,14 @@ namespace BusinessCardGenerator.API.Controllers
             return Ok(new UserCompressedInfoModel(result));
         }
 
-        [HttpPost]
-        public IActionResult AddNewUser(UserInputModel userInput)
+        [HttpPost("register")]
+        public IActionResult RegisterNewUser(UserInputModel userInput)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
+
+            if (userService.IsUserRegisteredWithEmail(userInput.Email))
+                return Conflict();
 
             userService.Add(new User(userInput));
 
@@ -62,13 +65,23 @@ namespace BusinessCardGenerator.API.Controllers
             return Ok(new UserCompressedInfoModel(user));
         }
 
-        [HttpPatch]
-        public IActionResult UpdateUser(UserInputModel userInput)
+        [HttpPatch("{id}")]
+        public IActionResult UpdateUser(Guid id, UserInputModel model)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            userService.Update(new User(userInput));
+            User user = userService.GetById(id);
+
+            if (user == null)
+                return NotFound();
+
+            if (user.Email != model.Email && userService.IsUserRegisteredWithEmail(model.Email))
+                return Conflict();
+
+            user.ApplyChanges(model);
+
+            userService.Update(user);
 
             return NoContent();
         }

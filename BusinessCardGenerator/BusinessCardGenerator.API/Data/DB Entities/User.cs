@@ -21,6 +21,15 @@ namespace BusinessCardGenerator.API.Data
             Password = input.Password;
         }
 
+        public void ApplyChanges(UserInputModel model)
+        {
+            FirstName = model.FirstName;
+            LastName = model.LastName;
+            Email = model.Email;
+            Phone = model.Phone;
+            Password = model.Password;
+        }
+
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }

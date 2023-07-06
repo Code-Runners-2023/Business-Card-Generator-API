@@ -19,11 +19,17 @@ namespace BusinessCardGenerator.API.Services
         public User GetById(Guid id)
             => context.Users.FirstOrDefault(user => user.Id.Equals(id));
 
+        public User GetByEmail(string email)
+            => context.Users.FirstOrDefault(user => user.Email == email);
+
         public User GetByEmailAndPassword(string email, string password)
             => context.Users.FirstOrDefault(user => user.Email == email && user.Password == password);
 
         public bool VerifyLogin(UserLoginModel login)
             => GetByEmailAndPassword(login.Email, login.Password) != null;
+
+        public bool IsUserRegisteredWithEmail(string email)
+            => GetByEmail(email) != null;
 
         public void Add(User user)
         {
