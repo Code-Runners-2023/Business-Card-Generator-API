@@ -1,5 +1,7 @@
 ﻿using BusinessCardGenerator.API.Data;
 using BusinessCardGenerator.API.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace BusinessCardGenerator.API.Services
 {
@@ -13,26 +15,39 @@ namespace BusinessCardGenerator.API.Services
         }
 
         public List<BusinessCard> GetAll(Guid userId)
-            => 
+            => context.BusinessCards
+                      .Include(bcard => bcard.User)
+                      .Where(bcard => bcard.UserId.Equals(userId))
+                      .ToList();
 
         public BusinessCard GetById(Guid bcardId)
-        {
-            throw new NotImplementedException();
-        }
+            => context.BusinessCards
+                      .Include(bcard => bcard.User)
+                      .FirstOrDefault(bcard => bcard.Id.Equals(bcardId));
 
         public void Add(BusinessCard bcard)
         {
-            throw new NotImplementedException();
+            context.BusinessCards.Add(bcard);
+            context.SaveChanges();
         }
 
         public void Update(BusinessCard bcard)
         {
-            throw new NotImplementedException();
+            context.BusinessCards.Update(bcard);
+            context.SaveChanges();
         }
 
         public BusinessCard Remove(Guid userId, Guid bcardId)
         {
-            throw new NotImplementedException();
+            BusinessCard bcard = GetById(bcardId);
+
+            if (bcard == null || bcard.UserId != userId)
+                return null;
+
+            context.BusinessCards.Remove(bcard);
+            context.SaveChanges();
+
+            return bcard;
         }
     }
 }
