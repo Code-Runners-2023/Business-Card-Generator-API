@@ -1,4 +1,5 @@
 ﻿using BusinessCardGenerator.API.Data;
+using BusinessCardGenerator.API.Models.Image;
 using BusinessCardGenerator.API.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -24,11 +25,13 @@ namespace BusinessCardGenerator.API.Controllers
             if (userService.GetById(userId) == null)
                 return BadRequest();
             
-            List<string> files = imageService.GetAll(userId)
-                                             .Select(image => imageService.GetFromCloud(image.Id))
-                                             .ToList();
+            List<ImageCompressedInfoModel> compressedImages = imageService
+                                                              .GetAll(userId)
+                                                              .Select(image => new ImageCompressedInfoModel(image.Id,
+                                                                                   imageService.GetFromCloud(image.Id)))
+                                                              .ToList();
 
-            return Ok(files);
+            return Ok(compressedImages);
         }
 
         [HttpGet("{imageId}")]
@@ -37,18 +40,16 @@ namespace BusinessCardGenerator.API.Controllers
             if (userService.GetById(userId) == null)
                 return BadRequest();
 
-            Image image = imageService.GetById(userId, imageId);
+            if (!imageService.CheckIfUserIsOwner(userId, imageId))
+                return Conflict();
 
-            if (image == null)
-                return NotFound();
+            string file = imageService.GetFromCloud(imageId);
 
-            string file = imageService.GetFromCloud(image.Id);
-
-            return Ok(file);
+            return Ok(new ImageCompressedInfoModel(imageId, file));
         }
 
-        [HttpPost]
-        public IActionResult AddNewUserImage(Guid userId, IFormFile file)
+        [HttpPost("upload")]
+        public IActionResult UploadNewUserImage(Guid userId, IFormFile file)
         {
             User user = userService.GetById(userId);
             
@@ -61,6 +62,7 @@ namespace BusinessCardGenerator.API.Controllers
 
             Image image = new Image()
             {
+                Id = imageId,
                 UserId = userId,
                 User = user,
                 Path = file.FileName
@@ -74,17 +76,12 @@ namespace BusinessCardGenerator.API.Controllers
         [HttpDelete("{imageId}")]
         public IActionResult RemoveUserImageById(Guid userId, Guid imageId)
         {
-            if (userService.GetById(userId) == null)
-                return BadRequest();
-
-            Image removed = imageService.Remove(userId, imageId);
-
-            if (removed == null)
+            if (userService.GetById(userId) == null || imageService.Remove(userId, imageId) == null)
                 return BadRequest();
 
             string file = imageService.DeleteFromCloud(imageId);
 
-            return Ok($"{removed.Path} -> {file}");
+            return Ok(new ImageCompressedInfoModel(imageId, file));
         }
     }
 }

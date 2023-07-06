@@ -19,15 +19,15 @@ namespace BusinessCardGenerator.API.Services
                       .Where(image => image.UserId.Equals(userId))
                       .ToList();
 
-        public Image GetById(Guid userId, Guid imageId)
+        public Image GetById(Guid imageId)
             => context.Images
                       .Include(image => image.User)
-                      .FirstOrDefault(image => image.Id.Equals(imageId) && image.UserId.Equals(userId));
+                      .FirstOrDefault(image => image.Id.Equals(imageId));
 
-        public string GetFromCloud(Guid imageId)
-        {
-            return $"[TODO] ImageService -> GetFromCloud method is not implemented yet!";
-        }
+        public bool CheckIfUserIsOwner(Guid userId, Guid imageId)
+            => context.Images
+                      .Include(image => image.User)
+                      .Any(image => image.Id.Equals(imageId) && image.UserId.Equals(userId));
 
         public void Add(Image image)
         {
@@ -35,22 +35,27 @@ namespace BusinessCardGenerator.API.Services
             context.SaveChanges();
         }
 
-        public void SaveInCloud(Guid imageId, IFormFile file)
-        {
-            Console.WriteLine("[TODO] ImageService -> SaveInCloud method is not implemented yet!");
-        }
-
         public Image Remove(Guid userId, Guid imageId)
         {
-            Image image = GetById(userId, imageId);
+            Image image = GetById(imageId);
 
-            if (image == null)
+            if (image == null || image.UserId != userId)
                 return null;
 
             context.Images.Remove(image);
             context.SaveChanges();
 
             return image;
+        }
+
+        public string GetFromCloud(Guid imageId)
+        {
+            return $"[TODO] ImageService -> GetFromCloud method is not implemented yet!";
+        }
+
+        public void SaveInCloud(Guid imageId, IFormFile file)
+        {
+            Console.WriteLine("[TODO] ImageService -> SaveInCloud method is not implemented yet!");
         }
 
         public string DeleteFromCloud(Guid imageId)

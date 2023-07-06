@@ -6,15 +6,17 @@ namespace BusinessCardGenerator.API.Services.Interfaces
     {
         List<Image> GetAll(Guid userId);
 
-        Image GetById(Guid userId, Guid imageId);
+        Image GetById(Guid imageId);
 
-        string GetFromCloud(Guid imageId);
+        bool CheckIfUserIsOwner(Guid userId, Guid imageId);
 
         void Add(Image image);
 
-        void SaveInCloud(Guid imageId, IFormFile file);
-
         Image Remove(Guid userId, Guid imageId);
+
+        string GetFromCloud(Guid imageId);
+
+        void SaveInCloud(Guid imageId, IFormFile file);
 
         string DeleteFromCloud(Guid imageId);
     }
