@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace BusinessCardGenerator.API.Models
+namespace BusinessCardGenerator.API.Models.User
 {
     public class UserInputModel
     {

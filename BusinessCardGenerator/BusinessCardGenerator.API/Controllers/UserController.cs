@@ -1,5 +1,5 @@
 ﻿using BusinessCardGenerator.API.Data;
-using BusinessCardGenerator.API.Models;
+using BusinessCardGenerator.API.Models.User;
 using BusinessCardGenerator.API.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -46,6 +46,20 @@ namespace BusinessCardGenerator.API.Controllers
             userService.Add(new User(userInput));
 
             return NoContent();
+        }
+
+        [HttpPost("login")]
+        public IActionResult ValidateLoginAttempt(UserLoginModel login)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+
+            if (!userService.VerifyLogin(login))
+                return NotFound();
+
+            User user = userService.GetByEmailAndPassword(login.Email, login.Password);
+
+            return Ok(new UserCompressedInfoModel(user));
         }
 
         [HttpPatch]

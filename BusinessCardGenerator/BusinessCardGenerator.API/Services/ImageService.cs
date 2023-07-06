@@ -16,13 +16,13 @@ namespace BusinessCardGenerator.API.Services
         public List<Image> GetAll(Guid userId)
             => context.Images
                       .Include(image => image.User)
-                      .Where(image => image.UserId == userId)
+                      .Where(image => image.UserId.Equals(userId))
                       .ToList();
 
         public Image GetById(Guid userId, Guid imageId)
             => context.Images
                       .Include(image => image.User)
-                      .FirstOrDefault(image => image.Id == imageId && image.UserId == userId);
+                      .FirstOrDefault(image => image.Id.Equals(imageId) && image.UserId.Equals(userId));
 
         public string GetFromCloud(Guid imageId)
         {

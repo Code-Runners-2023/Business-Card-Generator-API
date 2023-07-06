@@ -1,4 +1,5 @@
 ﻿using BusinessCardGenerator.API.Data;
+using BusinessCardGenerator.API.Models.User;
 using BusinessCardGenerator.API.Services.Interfaces;
 
 namespace BusinessCardGenerator.API.Services
@@ -16,7 +17,13 @@ namespace BusinessCardGenerator.API.Services
             => context.Users.ToList();
 
         public User GetById(Guid id)
-            => context.Users.FirstOrDefault(user => user.Id == id);
+            => context.Users.FirstOrDefault(user => user.Id.Equals(id));
+
+        public User GetByEmailAndPassword(string email, string password)
+            => context.Users.FirstOrDefault(user => user.Email == email && user.Password == password);
+
+        public bool VerifyLogin(UserLoginModel login)
+            => GetByEmailAndPassword(login.Email, login.Password) != null;
 
         public void Add(User user)
         {

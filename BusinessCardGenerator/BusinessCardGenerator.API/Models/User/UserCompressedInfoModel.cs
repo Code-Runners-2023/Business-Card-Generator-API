@@ -1,11 +1,11 @@
-﻿using BusinessCardGenerator.API.Data;
+﻿using UserClass = BusinessCardGenerator.API.Data.User;
 using System.ComponentModel.DataAnnotations;
 
-namespace BusinessCardGenerator.API.Models
+namespace BusinessCardGenerator.API.Models.User
 {
     public class UserCompressedInfoModel
     {
-        public UserCompressedInfoModel(User user)
+        public UserCompressedInfoModel(UserClass user)
         {
             Id = user.Id;
             FirstName = user.FirstName;

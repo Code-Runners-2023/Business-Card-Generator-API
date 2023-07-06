@@ -1,4 +1,4 @@
-using BusinessCardGenerator.API.Models;
+using BusinessCardGenerator.API.Models.User;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
