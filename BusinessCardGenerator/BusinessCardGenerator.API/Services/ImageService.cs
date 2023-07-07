@@ -50,7 +50,9 @@ namespace BusinessCardGenerator.API.Services
 
         public string GetFromCloud(Guid imageId)
         {
-            return $"[TODO] ImageService -> GetFromCloud method is not implemented yet!";
+            Console.WriteLine("[TODO] ImageService -> GetFromCloud method is not implemented yet!");
+            
+            return $"{GetById(imageId)?.Path}";
         }
 
         public void SaveInCloud(Guid imageId, IFormFile file)
@@ -60,7 +62,9 @@ namespace BusinessCardGenerator.API.Services
 
         public string DeleteFromCloud(Guid imageId)
         {
-            return "[TODO] ImageService -> DeleteFromCloud method is not implemented yet!";
+            Console.WriteLine("[TODO] ImageService -> DeleteFromCloud method is not implemented yet!");
+
+            return $"{GetById(imageId)?.Path}";
         }
     }
 }

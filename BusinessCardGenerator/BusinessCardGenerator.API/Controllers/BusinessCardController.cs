@@ -1,13 +1,7 @@
 ﻿using BusinessCardGenerator.API.Data;
 using BusinessCardGenerator.API.Models.BusinessCard;
-using BusinessCardGenerator.API.Models.User;
 using BusinessCardGenerator.API.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-using BusinessCardGenerator.API.Models.Image;
-using BusinessCardGenerator.API.Services;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace BusinessCardGenerator.API.Controllers
 {
@@ -30,7 +24,8 @@ namespace BusinessCardGenerator.API.Controllers
             if (userService.GetById(userId) == null)
                 return BadRequest();
 
-            List<BusinessCardCompressedInfoModel> compressedBcards = bcardService.GetAll(userId)
+            List<BusinessCardCompressedInfoModel> compressedBcards = bcardService
+                                                                       .GetAll(userId)
                                                                        .Select(bcard => 
                                                                                new BusinessCardCompressedInfoModel(bcard,
                                                                                bcardService.GetLogoFromCloud(bcard.Id)))
@@ -56,7 +51,7 @@ namespace BusinessCardGenerator.API.Controllers
         }
 
         [HttpPost("upload")]
-        public IActionResult UploadNewUserBcard(Guid userId, BusinessCardInputModel userInput)
+        public IActionResult UploadNewUserBcard(Guid userId, [FromForm] BusinessCardInputModel userInput)
         {
             User user = userService.GetById(userId);
 
@@ -64,8 +59,7 @@ namespace BusinessCardGenerator.API.Controllers
                 return BadRequest();
 
             Guid bcardId = Guid.NewGuid();
-            IFormFile logoFile = Request.Form.Files[0];
-            bcardService.SaveLogoInCloud(bcardId, logoFile);
+            bcardService.SaveLogoInCloud(bcardId, userInput.LogoFile);
 
             BusinessCard bcard = new BusinessCard()
             {
@@ -75,8 +69,9 @@ namespace BusinessCardGenerator.API.Controllers
                 Name = userInput.Name,
                 Address = userInput.Address,
                 Website = userInput.Website,
-                LogoPath = logoFile.FileName,
-                RGBColorCode = userInput.RGBColorCode
+                LogoPath = userInput.LogoFile.FileName,
+                HexColorCodeMain = userInput.HexColorCodeMain,
+                HexColorCodeSecondary = userInput.HexColorCodeSecondary
             };
 
             bcardService.Add(bcard);
@@ -85,7 +80,7 @@ namespace BusinessCardGenerator.API.Controllers
         }
 
         [HttpPatch("{bcardId}")]
-        public IActionResult UpdateUserBcard(Guid userId, Guid bcardId, BusinessCardInputModel model)
+        public IActionResult UpdateUserBcard(Guid userId, Guid bcardId, [FromForm] BusinessCardInputModel model)
         {
             if (!ModelState.IsValid || userService.GetById(userId) == null)
                 return BadRequest();

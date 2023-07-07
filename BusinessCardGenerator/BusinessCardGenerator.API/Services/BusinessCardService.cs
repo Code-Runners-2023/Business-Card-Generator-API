@@ -57,12 +57,16 @@ namespace BusinessCardGenerator.API.Services
 
         public string GetLogoFromCloud(Guid bcardId)
         {
-            return $"[TODO] BusinessCardService -> GetLogoFromCloud method is not implemented yet!";
+            Console.WriteLine("[TODO] BusinessCardService -> GetLogoFromCloud method is not implemented yet!");
+
+            return $"{GetById(bcardId)?.LogoPath}";
         }
 
         public string GetLogoPathInCloud(Guid bcardId)
         {
-            return $"[TODO] BusinessCardService -> GetLogoPathInCloud method is not implemented yet!";
+            Console.WriteLine("[TODO] BusinessCardService -> GetLogoPathInCloud method is not implemented yet!");
+
+            return $"{GetById(bcardId)?.LogoPath}";
         }
 
         public void SaveLogoInCloud(Guid bcardId, IFormFile file)
@@ -72,7 +76,9 @@ namespace BusinessCardGenerator.API.Services
 
         public string DeleteLogoFromCloud(Guid bcardId)
         {
-            return "[TODO] BusinessCardService -> DeleteLogoFromCloud method is not implemented yet!";
+            Console.WriteLine("[TODO] BusinessCardService -> DeleteLogoFromCloud method is not implemented yet!");
+
+            return $"{GetById(bcardId)?.LogoPath}";
         }
     }
 }

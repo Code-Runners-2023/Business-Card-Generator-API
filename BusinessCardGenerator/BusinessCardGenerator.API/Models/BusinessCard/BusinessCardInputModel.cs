@@ -15,7 +15,10 @@ namespace BusinessCardGenerator.API.Models.BusinessCard
         [Url]
         public string Website { get; set; }
 
-        [StringLength(13, ErrorMessage = "Invalid rgb color code! Max length is 13 characters!")]
-        public string RGBColorCode { get; set; }
+        public string HexColorCodeMain { get; set; }
+
+        public string HexColorCodeSecondary { get; set; }
+
+        public IFormFile LogoFile { get; set; }
     }
 }

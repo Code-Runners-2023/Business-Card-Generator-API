@@ -14,7 +14,8 @@ namespace BusinessCardGenerator.API.Data
             Address = model.Address;
             Website = model.Website;
             LogoPath = logoPath;
-            RGBColorCode = model.RGBColorCode;
+            HexColorCodeMain = model.HexColorCodeMain;
+            HexColorCodeSecondary = model.HexColorCodeSecondary;
         }
 
         [Key]
@@ -37,7 +38,8 @@ namespace BusinessCardGenerator.API.Data
 
         public string LogoPath { get; set; }
 
-        [StringLength(13, ErrorMessage = "Invalid rgb color code! Max length is 13 characters!")]
-        public string RGBColorCode { get; set; }
+        public string HexColorCodeMain { get; set; }
+
+        public string HexColorCodeSecondary { get; set; }
     }
 }

@@ -13,7 +13,8 @@ namespace BusinessCardGenerator.API.Models.BusinessCard
             Address = bcard.Address;
             Website = bcard.Website;
             LogoFile = logoFile;
-            RGBColorCode = bcard.RGBColorCode;
+            HexColorCodeMain = bcard.HexColorCodeMain;
+            HexColorCodeSecondary = bcard.HexColorCodeSecondary;
         }
 
         public Guid Id { get; set; }
@@ -26,6 +27,8 @@ namespace BusinessCardGenerator.API.Models.BusinessCard
 
         public string LogoFile { get; set; }
 
-        public string RGBColorCode { get; set; }
+        public string HexColorCodeMain { get; set; }
+
+        public string HexColorCodeSecondary { get; set; }
     }
 }
