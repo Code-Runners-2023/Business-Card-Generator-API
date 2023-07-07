@@ -25,6 +25,11 @@ namespace BusinessCardGenerator.API.Services
                       .Include(bcard => bcard.User)
                       .FirstOrDefault(bcard => bcard.Id.Equals(bcardId));
 
+        public bool CheckIfUserIsOwner(Guid userId, Guid bcardId)
+            => context.BusinessCards
+                      .Include(bcard => bcard.User)
+                      .Any(bcard => bcard.Id.Equals(bcardId) && bcard.UserId.Equals(userId));
+
         public void Add(BusinessCard bcard)
         {
             context.BusinessCards.Add(bcard);
@@ -48,6 +53,26 @@ namespace BusinessCardGenerator.API.Services
             context.SaveChanges();
 
             return bcard;
+        }
+
+        public string GetLogoFromCloud(Guid bcardId)
+        {
+            return $"[TODO] BusinessCardService -> GetLogoFromCloud method is not implemented yet!";
+        }
+
+        public string GetLogoPathInCloud(Guid bcardId)
+        {
+            return $"[TODO] BusinessCardService -> GetLogoPathInCloud method is not implemented yet!";
+        }
+
+        public void SaveLogoInCloud(Guid bcardId, IFormFile file)
+        {
+            Console.WriteLine("[TODO] BusinessCardService -> SaveLogoInCloud method is not implemented yet!");
+        }
+
+        public string DeleteLogoFromCloud(Guid bcardId)
+        {
+            return "[TODO] BusinessCardService -> DeleteLogoFromCloud method is not implemented yet!";
         }
     }
 }

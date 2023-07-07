@@ -19,6 +19,7 @@ builder.Services.AddDbContext<ApplicationContext>(c => c.UseNpgsql(connectionStr
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IImageService, ImageService>();
+builder.Services.AddScoped<IBusinessCardService, BusinessCardService>();
 
 var app = builder.Build();
 

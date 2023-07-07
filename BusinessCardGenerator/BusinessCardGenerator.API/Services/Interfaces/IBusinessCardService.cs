@@ -8,10 +8,20 @@ namespace BusinessCardGenerator.API.Services.Interfaces
 
         BusinessCard GetById(Guid bcardId);
 
+        bool CheckIfUserIsOwner(Guid userId, Guid bcardId);
+
         void Add(BusinessCard bcard);
 
         void Update(BusinessCard bcard);
 
         BusinessCard Remove(Guid userId, Guid bcardId);
+
+        string GetLogoFromCloud(Guid bcardId);
+
+        string GetLogoPathInCloud(Guid bcardId);
+
+        void SaveLogoInCloud(Guid bcardId, IFormFile file);
+
+        string DeleteLogoFromCloud(Guid bcardId);
     }
 }

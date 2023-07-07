@@ -41,7 +41,7 @@ namespace BusinessCardGenerator.API.Controllers
                 return BadRequest();
 
             if (!imageService.CheckIfUserIsOwner(userId, imageId))
-                return Conflict();
+                return NotFound();
 
             string file = imageService.GetFromCloud(imageId);
 
