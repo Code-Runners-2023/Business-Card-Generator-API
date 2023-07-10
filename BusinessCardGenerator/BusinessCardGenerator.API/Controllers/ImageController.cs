@@ -12,11 +12,15 @@ namespace BusinessCardGenerator.API.Controllers
     {
         private readonly IImageService imageService;
         private readonly IUserService userService;
+        private readonly IAzureCloudService azureCloudService;
 
-        public ImageController(IImageService imageService, IUserService userService)
+        private readonly string[] allowedFileContentTypes = { "image/jpeg", "image/png" };
+
+        public ImageController(IImageService imageService, IUserService userService, IAzureCloudService azureCloudService)
         {
             this.imageService = imageService;
             this.userService = userService;
+            this.azureCloudService = azureCloudService;
         }
 
         [HttpGet]
@@ -27,8 +31,8 @@ namespace BusinessCardGenerator.API.Controllers
             
             List<ImageCompressedInfoModel> compressedImages = imageService
                                                               .GetAll(userId)
-                                                              .Select(image => new ImageCompressedInfoModel(image.Id,
-                                                                                   imageService.GetFromCloud(image.Id)))
+                                                              .Select(image => new ImageCompressedInfoModel(image,
+                                                                                   azureCloudService.GetFileFromCloud(image.Id)))
                                                               .ToList();
 
             return Ok(compressedImages);
@@ -43,9 +47,11 @@ namespace BusinessCardGenerator.API.Controllers
             if (!imageService.CheckIfUserIsOwner(userId, imageId))
                 return NotFound();
 
-            string file = imageService.GetFromCloud(imageId);
+            Image image = imageService.GetById(imageId);
 
-            return Ok(new ImageCompressedInfoModel(imageId, file));
+            byte[] file = azureCloudService.GetFileFromCloud(imageId);
+
+            return Ok(new ImageCompressedInfoModel(image, file));
         }
 
         [HttpPost("upload")]
@@ -53,21 +59,21 @@ namespace BusinessCardGenerator.API.Controllers
         {
             User user = userService.GetById(userId);
             
-            if (user == null)
+            if (user == null || file == null || file.Length == 0 || !IsFileContentTypeAllowed(file.ContentType))
                 return BadRequest();
 
-            // save file in cloud storage
             Guid imageId = Guid.NewGuid();
-            imageService.SaveInCloud(imageId, file);
 
             Image image = new Image()
             {
                 Id = imageId,
                 UserId = userId,
                 User = user,
-                Path = file.FileName
+                FileName = file.FileName,
+                Length = file.Length
             };
 
+            azureCloudService.SaveFileInCloud(imageId, file);
             imageService.Add(image);
 
             return NoContent();
@@ -76,12 +82,20 @@ namespace BusinessCardGenerator.API.Controllers
         [HttpDelete("{imageId}")]
         public IActionResult RemoveUserImageById(Guid userId, Guid imageId)
         {
-            if (userService.GetById(userId) == null || imageService.Remove(userId, imageId) == null)
+            if (userService.GetById(userId) == null)
                 return BadRequest();
 
-            string file = imageService.DeleteFromCloud(imageId);
+            Image image = imageService.Remove(userId, imageId);
 
-            return Ok(new ImageCompressedInfoModel(imageId, file));
+            if (image == null)
+                return BadRequest();
+
+            byte[] file = azureCloudService.DeleteFileFromCloud(imageId);
+
+            return Ok(new ImageCompressedInfoModel(image, file));
         }
+
+        private bool IsFileContentTypeAllowed(string contentType)
+            => allowedFileContentTypes.Contains(contentType);
     }
 }

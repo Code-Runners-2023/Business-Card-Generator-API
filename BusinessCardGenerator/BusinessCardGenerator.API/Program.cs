@@ -22,6 +22,7 @@ builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<IBusinessCardService, BusinessCardService>();
 builder.Services.AddScoped<IDepositService, DepositService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
+builder.Services.AddScoped<IAzureCloudService, AzureCloudService>();
 
 var app = builder.Build();
 

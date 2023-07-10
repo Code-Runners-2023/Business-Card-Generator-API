@@ -1,7 +1,6 @@
 ﻿using BusinessCardGenerator.API.Data;
 using BusinessCardGenerator.API.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace BusinessCardGenerator.API.Services
 {
@@ -53,32 +52,6 @@ namespace BusinessCardGenerator.API.Services
             context.SaveChanges();
 
             return bcard;
-        }
-
-        public string GetLogoFromCloud(Guid bcardId)
-        {
-            Console.WriteLine("[TODO] BusinessCardService -> GetLogoFromCloud method is not implemented yet!");
-
-            return $"{GetById(bcardId)?.LogoPath}";
-        }
-
-        public string GetLogoPathInCloud(Guid bcardId)
-        {
-            Console.WriteLine("[TODO] BusinessCardService -> GetLogoPathInCloud method is not implemented yet!");
-
-            return $"{GetById(bcardId)?.LogoPath}";
-        }
-
-        public void SaveLogoInCloud(Guid bcardId, IFormFile file)
-        {
-            Console.WriteLine("[TODO] BusinessCardService -> SaveLogoInCloud method is not implemented yet!");
-        }
-
-        public string DeleteLogoFromCloud(Guid bcardId)
-        {
-            Console.WriteLine("[TODO] BusinessCardService -> DeleteLogoFromCloud method is not implemented yet!");
-
-            return $"{GetById(bcardId)?.LogoPath}";
         }
     }
 }

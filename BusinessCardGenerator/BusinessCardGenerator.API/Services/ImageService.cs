@@ -47,24 +47,5 @@ namespace BusinessCardGenerator.API.Services
 
             return image;
         }
-
-        public string GetFromCloud(Guid imageId)
-        {
-            Console.WriteLine("[TODO] ImageService -> GetFromCloud method is not implemented yet!");
-            
-            return $"{GetById(imageId)?.Path}";
-        }
-
-        public void SaveInCloud(Guid imageId, IFormFile file)
-        {
-            Console.WriteLine("[TODO] ImageService -> SaveInCloud method is not implemented yet!");
-        }
-
-        public string DeleteFromCloud(Guid imageId)
-        {
-            Console.WriteLine("[TODO] ImageService -> DeleteFromCloud method is not implemented yet!");
-
-            return $"{GetById(imageId)?.Path}";
-        }
     }
 }

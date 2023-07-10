@@ -8,12 +8,11 @@ namespace BusinessCardGenerator.API.Data
 {
     public class BusinessCard
     {
-        public void ApplyChanges(BusinessCardInputModel model, string logoPath)
+        public void ApplyChanges(BusinessCardInputModel model)
         {
             Name = model.Name;
             Address = model.Address;
             Website = model.Website;
-            LogoPath = logoPath;
             HexColorCodeMain = model.HexColorCodeMain;
             HexColorCodeSecondary = model.HexColorCodeSecondary;
         }
@@ -35,8 +34,6 @@ namespace BusinessCardGenerator.API.Data
 
         [Url]
         public string Website { get; set; }
-
-        public string LogoPath { get; set; }
 
         public string HexColorCodeMain { get; set; }
 

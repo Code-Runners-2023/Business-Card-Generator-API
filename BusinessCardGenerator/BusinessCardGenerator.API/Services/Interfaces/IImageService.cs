@@ -13,11 +13,5 @@ namespace BusinessCardGenerator.API.Services.Interfaces
         void Add(Image image);
 
         Image Remove(Guid userId, Guid imageId);
-
-        string GetFromCloud(Guid imageId);
-
-        void SaveInCloud(Guid imageId, IFormFile file);
-
-        string DeleteFromCloud(Guid imageId);
     }
 }
