@@ -15,6 +15,17 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(
+        builder =>
+        {
+            builder.WithOrigins("https://localhost:5173")
+                                .AllowAnyHeader()
+                                .AllowAnyMethod();
+        });
+});
+
 builder.Services.AddDbContext<ApplicationContext>(c => c.UseNpgsql(connectionString));
 
 builder.Services.AddScoped<IUserService, UserService>();
@@ -35,6 +46,8 @@ if (app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler();
 }
+
+app.UseCors();
 
 app.UseHttpsRedirection();
 
