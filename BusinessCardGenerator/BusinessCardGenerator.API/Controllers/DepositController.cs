@@ -3,6 +3,7 @@ using BusinessCardGenerator.API.Models.BusinessCard;
 using BusinessCardGenerator.API.Models.Deposit;
 using BusinessCardGenerator.API.Services;
 using BusinessCardGenerator.API.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -21,7 +22,7 @@ namespace BusinessCardGenerator.API.Controllers
             this.userService = userService;
         }
 
-        [HttpGet]
+        [HttpGet, Authorize]
         public IActionResult GetAllUserDeposits(Guid userId)
         {
             if (userService.GetById(userId) == null)
@@ -36,7 +37,7 @@ namespace BusinessCardGenerator.API.Controllers
             return Ok(compressedBcards);
         }
 
-        [HttpGet("{depositId}")]
+        [HttpGet("{depositId}"), Authorize]
         public IActionResult GetDepositById(Guid userId, Guid depositId)
         {
             if (userService.GetById(userId) == null)
@@ -50,7 +51,7 @@ namespace BusinessCardGenerator.API.Controllers
             return Ok(new DepositCompressedInfoModel(deposit));
         }
 
-        [HttpPost]
+        [HttpPost, Authorize]
         public IActionResult CreateNewDeposit(Guid userId, DepositInputModel newDeposit)
         {
             User user = userService.GetById(userId);

@@ -1,6 +1,7 @@
 ﻿using BusinessCardGenerator.API.Data;
 using BusinessCardGenerator.API.Models.Transaction;
 using BusinessCardGenerator.API.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BusinessCardGenerator.API.Controllers
@@ -21,7 +22,7 @@ namespace BusinessCardGenerator.API.Controllers
             this.bcardService = bcardService;
         }
 
-        [HttpGet("transactions")]
+        [HttpGet("transactions"), Authorize]
         public IActionResult GetAllUserBcardTransactions(Guid userId)
         {
             if (userService.GetById(userId) == null)
@@ -36,7 +37,7 @@ namespace BusinessCardGenerator.API.Controllers
             return Ok(compressedTransactions);
         }
 
-        [HttpGet("transactions/{transactionId}")]
+        [HttpGet("transactions/{transactionId}"), Authorize]
         public IActionResult GetUserTransactionById(Guid userId, Guid transactionId)
         {
             if (userService.GetById(userId) == null)
@@ -50,7 +51,7 @@ namespace BusinessCardGenerator.API.Controllers
             return Ok(new TransactionCompressedInfoModel(transaction));
         }
 
-        [HttpGet("bcards/{bcardId}/transaction")]
+        [HttpGet("bcards/{bcardId}/transaction"), Authorize]
         public IActionResult GetBcardTransaction(Guid userId, Guid bcardId)
         {
             if (!bcardService.CheckIfUserIsOwner(userId, bcardId))
@@ -64,7 +65,7 @@ namespace BusinessCardGenerator.API.Controllers
             return Ok(new TransactionCompressedInfoModel(transaction));
         }
 
-        [HttpPost("transactions")]
+        [HttpPost("transactions"), Authorize]
         public IActionResult CreateNewTransaction(Guid userId, TransactionInputModel newTransaction)
         {
             User user = userService.GetById(userId);

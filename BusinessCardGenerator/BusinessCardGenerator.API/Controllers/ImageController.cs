@@ -23,7 +23,7 @@ namespace BusinessCardGenerator.API.Controllers
             this.azureCloudService = azureCloudService;
         }
 
-        [HttpGet]
+        [HttpGet, Authorize]
         public IActionResult GetAllUserImages(Guid userId)
         {
             if (userService.GetById(userId) == null)
@@ -38,7 +38,7 @@ namespace BusinessCardGenerator.API.Controllers
             return Ok(compressedImages);
         }
 
-        [HttpGet("{imageId}")]
+        [HttpGet("{imageId}"), Authorize]
         public IActionResult GetUserImageById(Guid userId, Guid imageId)
         {
             if (userService.GetById(userId) == null)
@@ -54,7 +54,7 @@ namespace BusinessCardGenerator.API.Controllers
             return Ok(new ImageCompressedInfoModel(image, file));
         }
 
-        [HttpPost("upload")]
+        [HttpPost("upload"), Authorize]
         public IActionResult UploadNewUserImage(Guid userId, IFormFile file)
         {
             User user = userService.GetById(userId);
@@ -79,7 +79,7 @@ namespace BusinessCardGenerator.API.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{imageId}")]
+        [HttpDelete("{imageId}"), Authorize]
         public IActionResult RemoveUserImageById(Guid userId, Guid imageId)
         {
             if (userService.GetById(userId) == null)

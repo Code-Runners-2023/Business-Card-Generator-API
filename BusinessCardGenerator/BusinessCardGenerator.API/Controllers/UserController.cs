@@ -1,6 +1,7 @@
 ﻿using BusinessCardGenerator.API.Data;
 using BusinessCardGenerator.API.Models.User;
 using BusinessCardGenerator.API.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BusinessCardGenerator.API.Controllers
@@ -10,13 +11,15 @@ namespace BusinessCardGenerator.API.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService userService;
+        private readonly ITokenService tokenService;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, ITokenService tokenService)
         {
             this.userService = userService;
+            this.tokenService = tokenService;
         }
 
-        [HttpGet]
+        [HttpGet, Authorize]
         public IActionResult GetAllUsers()
         {
             List<UserCompressedInfoModel> users = userService.GetAll()
@@ -26,7 +29,7 @@ namespace BusinessCardGenerator.API.Controllers
             return Ok(users);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}"), Authorize]
         public IActionResult GetUserById(Guid id)
         {
             User result = userService.GetById(id);
@@ -58,14 +61,15 @@ namespace BusinessCardGenerator.API.Controllers
                 return BadRequest();
 
             if (!userService.VerifyLogin(login))
-                return NotFound();
+                return Unauthorized();
 
             User user = userService.GetByEmailAndPassword(login.Email, login.Password);
+            string jwtToken = tokenService.GenerateNewToken(user);
 
-            return Ok(new UserCompressedInfoModel(user));
+            return Ok(new UserAuthResponse(user, jwtToken));
         }
 
-        [HttpPatch("{id}")]
+        [HttpPatch("{id}"), Authorize]
         public IActionResult UpdateUser(Guid id, UserInputModel model)
         {
             if (!ModelState.IsValid)
@@ -86,7 +90,7 @@ namespace BusinessCardGenerator.API.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}"), Authorize]
         public IActionResult RemoveUserById(Guid id)
         {
             User removed = userService.Remove(id);

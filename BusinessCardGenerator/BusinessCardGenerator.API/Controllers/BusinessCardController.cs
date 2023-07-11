@@ -1,6 +1,7 @@
 ﻿using BusinessCardGenerator.API.Data;
 using BusinessCardGenerator.API.Models.BusinessCard;
 using BusinessCardGenerator.API.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BusinessCardGenerator.API.Controllers
@@ -23,7 +24,7 @@ namespace BusinessCardGenerator.API.Controllers
             this.azureCloudService = azureCloudService;
         }
 
-        [HttpGet]
+        [HttpGet, Authorize]
         public IActionResult GetAllUserBcards(Guid userId)
         {
             if (userService.GetById(userId) == null)
@@ -39,7 +40,7 @@ namespace BusinessCardGenerator.API.Controllers
             return Ok(compressedBcards);
         }
 
-        [HttpGet("{bcardId}")]
+        [HttpGet("{bcardId}"), Authorize]
         public IActionResult GetUserBcardById(Guid userId, Guid bcardId)
         {
             if (userService.GetById(userId) == null)
@@ -55,7 +56,7 @@ namespace BusinessCardGenerator.API.Controllers
             return Ok(new BusinessCardCompressedInfoModel(bcard, logoFile));
         }
 
-        [HttpPost("upload")]
+        [HttpPost("upload"), Authorize]
         public IActionResult UploadNewUserBcard(Guid userId, [FromForm] BusinessCardInputModel userInput)
         {
             User user = userService.GetById(userId);
@@ -83,7 +84,7 @@ namespace BusinessCardGenerator.API.Controllers
             return NoContent();
         }
 
-        [HttpPatch("{bcardId}")]
+        [HttpPatch("{bcardId}"), Authorize]
         public IActionResult UpdateUserBcard(Guid userId, Guid bcardId, [FromForm] BusinessCardInputModel model)
         {
             if (!ModelState.IsValid || !IsFileContentTypeAllowed(model.LogoFile.ContentType) 
@@ -103,7 +104,7 @@ namespace BusinessCardGenerator.API.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{bcardId}")]
+        [HttpDelete("{bcardId}"), Authorize]
         public IActionResult RemoveUserBcardById(Guid userId, Guid bcardId)
         {
             if (userService.GetById(userId) == null)
