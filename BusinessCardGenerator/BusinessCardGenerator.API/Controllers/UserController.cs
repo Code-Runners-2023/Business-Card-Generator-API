@@ -49,9 +49,13 @@ namespace BusinessCardGenerator.API.Controllers
             if (userService.IsUserRegisteredWithEmail(userInput.Email))
                 return Conflict();
 
-            userService.Add(new User(userInput));
+            User user = new User(userInput);
 
-            return NoContent();
+            userService.Add(user);
+
+            string jwtToken = tokenService.GenerateNewToken(user);
+
+            return Ok(new UserAuthResponse(user, jwtToken));
         }
 
         [HttpPost("login")]
