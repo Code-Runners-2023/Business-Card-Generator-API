@@ -8,21 +8,7 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-
-var connectionString =
-    builder.Configuration.GetConnectionString("ApplicationContextConnection") ??
-    throw new InvalidOperationException("Connection string 'ApplicationContextConnection' not found.");
-
-var jwtSettings =
-    builder.Configuration.GetSection("JwtSettings") ??
-    throw new InvalidOperationException("'JwtSettings' not found.");
-
-string jwtIssuer = jwtSettings["Issuer"] ?? throw new InvalidOperationException("JWT Issuer not found!");
-string jwtAudience = jwtSettings["Audience"] ?? throw new InvalidOperationException("JWT Audience not found!");
-string jwtSecretKey = jwtSettings["SecretKey"] ?? throw new InvalidOperationException("JWT SecretKey not found!");
-
-string frontendUrl = builder.Configuration.GetValue<string>("FrontendUrl") ??
-                     throw new InvalidOperationException("FrontendUrl not found!");
+var appSettings = new ApplicationSettings(builder.Configuration);
 
 // Add services to the container.
 
@@ -62,7 +48,7 @@ builder.Services.AddCors(options =>
     options.AddDefaultPolicy(
         builder =>
         {
-            builder.WithOrigins(frontendUrl)
+            builder.WithOrigins(appSettings.FrontendUrl)
                    .AllowAnyHeader()
                    .AllowAnyMethod();
         });
@@ -79,16 +65,16 @@ builder.Services
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = jwtIssuer,
-            ValidAudience = jwtAudience,
+            ValidIssuer = appSettings.JwtIssuer,
+            ValidAudience = appSettings.JwtAudience,
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(jwtSecretKey)
+                Encoding.UTF8.GetBytes(appSettings.JwtSecretKey)
             )
         };
     }
 );
 
-builder.Services.AddDbContext<ApplicationContext>(c => c.UseNpgsql(connectionString));
+builder.Services.AddDbContext<ApplicationContext>(c => c.UseNpgsql(appSettings.ConnectionString));
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IImageService, ImageService>();
