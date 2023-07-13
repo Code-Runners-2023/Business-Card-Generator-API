@@ -13,15 +13,17 @@ namespace BusinessCardGenerator.API.Controllers
         private readonly IBusinessCardService bcardService;
         private readonly IUserService userService;
         private readonly IAzureCloudService azureCloudService;
+        private readonly ApplicationSettings settings;
 
         private readonly string[] allowedFileContentTypes = { "image/jpeg", "image/png" };
 
         public BusinessCardController(IBusinessCardService bcardService, IUserService userService,
-                                      IAzureCloudService azureCloudService)
+                                      IAzureCloudService azureCloudService, IConfiguration config)
         {
             this.bcardService = bcardService;
             this.userService = userService;
             this.azureCloudService = azureCloudService;
+            settings = new ApplicationSettings(config);
         }
 
         [HttpGet, Authorize]
@@ -31,11 +33,10 @@ namespace BusinessCardGenerator.API.Controllers
                 return BadRequest();
 
             List<BusinessCardCompressedInfoModel> compressedBcards = bcardService
-                                                                       .GetAll(userId)
-                                                                       .Select(bcard => 
-                                                                               new BusinessCardCompressedInfoModel(bcard,
-                                                                               azureCloudService.GetFileFromCloud(bcard.Id, bcard.LogoFileExtension)))
-                                                                       .ToList();
+                                                                     .GetAll(userId)
+                                                                     .Select(bcard =>
+                                                                             new BusinessCardCompressedInfoModel(bcard, settings.AzureBlobUrl))
+                                                                     .ToList();
 
             return Ok(compressedBcards);
         }
@@ -51,9 +52,7 @@ namespace BusinessCardGenerator.API.Controllers
 
             BusinessCard bcard = bcardService.GetById(bcardId);
 
-            byte[] logoFile = azureCloudService.GetFileFromCloud(bcard.Id, bcard.LogoFileExtension);
-
-            return Ok(new BusinessCardCompressedInfoModel(bcard, logoFile));
+            return Ok(new BusinessCardCompressedInfoModel(bcard, settings.AzureBlobUrl));
         }
 
         [HttpPost("upload"), Authorize]
@@ -88,8 +87,7 @@ namespace BusinessCardGenerator.API.Controllers
         [HttpPatch("{bcardId}"), Authorize]
         public IActionResult UpdateUserBcard(Guid userId, Guid bcardId, [FromForm] BusinessCardInputModel model)
         {
-            if (!ModelState.IsValid || !IsFileContentTypeAllowed(model.LogoFile.ContentType) 
-                                    || userService.GetById(userId) == null)
+            if (!ModelState.IsValid || !IsFileContentTypeAllowed(model.LogoFile.ContentType) || userService.GetById(userId) == null)
                 return BadRequest();
 
             BusinessCard bcard = bcardService.GetById(bcardId);
@@ -116,9 +114,9 @@ namespace BusinessCardGenerator.API.Controllers
             if (removed == null)
                 return BadRequest();
 
-            byte[] logoFile = azureCloudService.DeleteFileFromCloud(bcardId, removed.LogoFileExtension);
+            azureCloudService.DeleteFileFromCloud(bcardId, removed.LogoFileExtension);
 
-            return Ok(new BusinessCardCompressedInfoModel(removed, logoFile));
+            return Ok();
         }
 
         private bool IsFileContentTypeAllowed(string contentType)

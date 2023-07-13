@@ -8,9 +8,8 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-var appSettings = new ApplicationSettings(builder.Configuration);
 
-// Add services to the container.
+var settings = new ApplicationSettings(builder.Configuration);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -48,7 +47,7 @@ builder.Services.AddCors(options =>
     options.AddDefaultPolicy(
         builder =>
         {
-            builder.WithOrigins(appSettings.FrontendUrl)
+            builder.WithOrigins(settings.FrontendUrl)
                    .AllowAnyHeader()
                    .AllowAnyMethod();
         });
@@ -65,16 +64,16 @@ builder.Services
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = appSettings.JwtIssuer,
-            ValidAudience = appSettings.JwtAudience,
+            ValidIssuer = settings.JwtIssuer,
+            ValidAudience = settings.JwtAudience,
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(appSettings.JwtSecretKey)
+                Encoding.UTF8.GetBytes(settings.JwtSecretKey)
             )
         };
     }
 );
 
-builder.Services.AddDbContext<ApplicationContext>(c => c.UseNpgsql(appSettings.ConnectionString));
+builder.Services.AddDbContext<ApplicationContext>(c => c.UseNpgsql(settings.PostgresConnectionString));
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IImageService, ImageService>();

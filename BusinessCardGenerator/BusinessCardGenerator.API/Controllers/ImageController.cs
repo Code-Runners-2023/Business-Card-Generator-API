@@ -13,14 +13,17 @@ namespace BusinessCardGenerator.API.Controllers
         private readonly IImageService imageService;
         private readonly IUserService userService;
         private readonly IAzureCloudService azureCloudService;
+        private readonly ApplicationSettings settings;
 
         private readonly string[] allowedFileContentTypes = { "image/jpeg", "image/png" };
 
-        public ImageController(IImageService imageService, IUserService userService, IAzureCloudService azureCloudService)
+        public ImageController(IImageService imageService, IUserService userService,
+                               IAzureCloudService azureCloudService, IConfiguration config)
         {
             this.imageService = imageService;
             this.userService = userService;
             this.azureCloudService = azureCloudService;
+            settings = new ApplicationSettings(config);
         }
 
         [HttpGet, Authorize]
@@ -31,8 +34,7 @@ namespace BusinessCardGenerator.API.Controllers
             
             List<ImageCompressedInfoModel> compressedImages = imageService
                                                               .GetAll(userId)
-                                                              .Select(image => new ImageCompressedInfoModel(image,
-                                                                                   azureCloudService.GetFileFromCloud(image.Id, image.FileExtension)))
+                                                              .Select(image => new ImageCompressedInfoModel(image, settings.AzureBlobUrl))
                                                               .ToList();
 
             return Ok(compressedImages);
@@ -49,9 +51,7 @@ namespace BusinessCardGenerator.API.Controllers
 
             Image image = imageService.GetById(imageId);
 
-            byte[] file = azureCloudService.GetFileFromCloud(image.Id, image.FileExtension);
-
-            return Ok(new ImageCompressedInfoModel(image, file));
+            return Ok(new ImageCompressedInfoModel(image, settings.AzureBlobUrl));
         }
 
         [HttpPost("upload"), Authorize]
@@ -89,9 +89,9 @@ namespace BusinessCardGenerator.API.Controllers
             if (image == null)
                 return BadRequest();
 
-            byte[] file = azureCloudService.DeleteFileFromCloud(imageId, image.FileExtension);
+            azureCloudService.DeleteFileFromCloud(imageId, image.FileExtension);
 
-            return Ok(new ImageCompressedInfoModel(image, file));
+            return Ok();
         }
 
         private bool IsFileContentTypeAllowed(string contentType)

@@ -6,14 +6,13 @@ namespace BusinessCardGenerator.API.Models.BusinessCard
 {
     public class BusinessCardCompressedInfoModel
     {
-        public BusinessCardCompressedInfoModel(BusinessCardClass bcard, byte[] logoFile)
+        public BusinessCardCompressedInfoModel(BusinessCardClass bcard, string baseLink)
         {
             Id = bcard.Id;
             Name = bcard.Name;
             Address = bcard.Address;
             Website = bcard.Website;
-            LogoFileExtension = bcard.LogoFileExtension;
-            LogoFile = logoFile;
+            LogoLink = $"{baseLink}{Id}{bcard.LogoFileExtension}";
             HexColorCodeMain = bcard.HexColorCodeMain;
             HexColorCodeSecondary = bcard.HexColorCodeSecondary;
         }
@@ -26,9 +25,7 @@ namespace BusinessCardGenerator.API.Models.BusinessCard
 
         public string Website { get; set; }
 
-        public string LogoFileExtension { get; set; }
-
-        public byte[] LogoFile { get; set; }
+        public string LogoLink { get; set; }
 
         public string HexColorCodeMain { get; set; }
 

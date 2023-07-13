@@ -4,10 +4,13 @@ namespace BusinessCardGenerator.API.Data
 {
     public class ApplicationSettings
     {
-        public ApplicationSettings(ConfigurationManager config)
+        public ApplicationSettings(IConfiguration config)
         {
-            ConnectionString = config.GetConnectionString("ApplicationContextConnection") ??
-                               throw new InvalidOperationException("Connection string 'ApplicationContextConnection' not found.");
+            PostgresConnectionString = config.GetConnectionString("PostgresConnection") ??
+                                       throw new InvalidOperationException("Connection string 'PostgresConnection' not found.");
+
+            AzureConnectionString = config.GetConnectionString("AzureConnection") ??
+                                    throw new InvalidOperationException("Connection string 'AzureConnection' not found.");
 
             var jwtSettings = config.GetSection("JwtSettings") ??
                               throw new InvalidOperationException("'JwtSettings' not found.");
@@ -28,7 +31,7 @@ namespace BusinessCardGenerator.API.Data
             AzureContainer = azureSettings["Container"] ?? throw new InvalidOperationException("Azure Container not found!");
         }
 
-        public string ConnectionString { get; private set; }
+        public string PostgresConnectionString { get; private set; }
 
         public string JwtIssuer { get; private set; }
 
@@ -37,6 +40,8 @@ namespace BusinessCardGenerator.API.Data
         public string JwtSecretKey {get; private set; }
 
         public string FrontendUrl {get; private set; }
+
+        public string AzureConnectionString { get; private set; }
 
         public string AzureBlobUrl {get; private set; }
 
