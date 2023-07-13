@@ -95,6 +95,8 @@ if (app.Environment.IsDevelopment())
     app.UseExceptionHandler();
 }
 
+app.UseCors();
+
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
@@ -102,7 +104,5 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
-app.UseCors();
 
 app.Run();

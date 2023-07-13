@@ -11,29 +11,16 @@ namespace BusinessCardGenerator.API.Services
 {
     public class TokenService : ITokenService
     {
-        private readonly string issuer;
-        private readonly string audience;
-        private readonly string secretKey;
-        private readonly double expirationMinutes;
+        private readonly ApplicationSettings settings;
 
-        public TokenService(IConfiguration configuration)
+        public TokenService(IConfiguration config)
         {
-            var jwtSettings = configuration.GetSection("JwtSettings") ??
-                              throw new InvalidOperationException("'JwtSettings' not found.");
-
-            issuer = jwtSettings["Issuer"] ?? throw new InvalidOperationException("JWT Issuer not found!");
-            
-            audience = jwtSettings["Audience"] ?? throw new InvalidOperationException("JWT Audience not found!");
-            
-            secretKey = jwtSettings["SecretKey"] ?? throw new InvalidOperationException("JWT SecretKey not found!");
-            
-            expirationMinutes = double.Parse(jwtSettings["ExpirationMinutes"] ??
-                                throw new InvalidOperationException("JWT ExpirationMinutes not found!"));
+            settings = new ApplicationSettings(config);
         }
 
         public string GenerateNewToken(User user)
         {
-            var expiration = DateTime.UtcNow.AddMinutes(expirationMinutes);
+            var expiration = DateTime.UtcNow.AddMinutes(settings.JwtExpirationMinutes);
             
             var token = CreateJwtToken(
                 CreateClaims(user),
@@ -48,8 +35,8 @@ namespace BusinessCardGenerator.API.Services
 
         public JwtSecurityToken CreateJwtToken(List<Claim> claims, SigningCredentials credentials, DateTime expiration)
             => new(
-                issuer,
-                audience,
+                settings.JwtIssuer,
+                settings.JwtAudience,
                 claims,
                 expires: expiration,
                 signingCredentials: credentials
@@ -72,7 +59,7 @@ namespace BusinessCardGenerator.API.Services
         {
             return new SigningCredentials(
                 new SymmetricSecurityKey(
-                    Encoding.UTF8.GetBytes(secretKey)
+                    Encoding.UTF8.GetBytes(settings.JwtSecretKey)
                 ),
                 SecurityAlgorithms.HmacSha256
             );

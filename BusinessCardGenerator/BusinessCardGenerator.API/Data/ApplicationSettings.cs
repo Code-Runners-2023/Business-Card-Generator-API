@@ -18,6 +18,8 @@ namespace BusinessCardGenerator.API.Data
             JwtIssuer = jwtSettings["Issuer"] ?? throw new InvalidOperationException("JWT Issuer not found!");
             JwtAudience = jwtSettings["Audience"] ?? throw new InvalidOperationException("JWT Audience not found!");
             JwtSecretKey = jwtSettings["SecretKey"] ?? throw new InvalidOperationException("JWT SecretKey not found!");
+            JwtExpirationMinutes = double.Parse(jwtSettings["ExpirationMinutes"] ??
+                                                throw new InvalidOperationException("JWT ExpirationMinutes not found!"));
 
             FrontendUrl = config.GetValue<string>("FrontendUrl") ??
                           throw new InvalidOperationException("FrontendUrl not found!");
@@ -38,6 +40,8 @@ namespace BusinessCardGenerator.API.Data
         public string JwtAudience {get; private set; }
 
         public string JwtSecretKey {get; private set; }
+
+        public double JwtExpirationMinutes { get; private set; }
 
         public string FrontendUrl {get; private set; }
 
