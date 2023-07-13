@@ -7,16 +7,13 @@ namespace BusinessCardGenerator.API.Models.Image
         public ImageCompressedInfoModel(ImageClass image, byte[] file)
         {
             Id = image.Id;
-            FileName = image.FileName;
-            Length = image.Length;
+            FileExtension = image.FileExtension;
             File = file;
         }
 
         public Guid Id { get; set; }
 
-        public string FileName { get; set; }
-
-        public long Length { get; set; }
+        public string FileExtension { get; set; }
 
         public byte[] File { get; set; }
     }

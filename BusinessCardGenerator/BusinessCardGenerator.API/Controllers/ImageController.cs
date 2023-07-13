@@ -32,7 +32,7 @@ namespace BusinessCardGenerator.API.Controllers
             List<ImageCompressedInfoModel> compressedImages = imageService
                                                               .GetAll(userId)
                                                               .Select(image => new ImageCompressedInfoModel(image,
-                                                                                   azureCloudService.GetFileFromCloud(image.Id)))
+                                                                                   azureCloudService.GetFileFromCloud(image.Id, image.FileExtension)))
                                                               .ToList();
 
             return Ok(compressedImages);
@@ -49,7 +49,7 @@ namespace BusinessCardGenerator.API.Controllers
 
             Image image = imageService.GetById(imageId);
 
-            byte[] file = azureCloudService.GetFileFromCloud(imageId);
+            byte[] file = azureCloudService.GetFileFromCloud(image.Id, image.FileExtension);
 
             return Ok(new ImageCompressedInfoModel(image, file));
         }
@@ -69,11 +69,10 @@ namespace BusinessCardGenerator.API.Controllers
                 Id = imageId,
                 UserId = userId,
                 User = user,
-                FileName = file.FileName,
-                Length = file.Length
+                FileExtension = Path.GetExtension(file.FileName)
             };
 
-            azureCloudService.SaveFileInCloud(imageId, file);
+            azureCloudService.UploadFileInCloud(imageId, file);
             imageService.Add(image);
 
             return NoContent();
@@ -90,7 +89,7 @@ namespace BusinessCardGenerator.API.Controllers
             if (image == null)
                 return BadRequest();
 
-            byte[] file = azureCloudService.DeleteFileFromCloud(imageId);
+            byte[] file = azureCloudService.DeleteFileFromCloud(imageId, image.FileExtension);
 
             return Ok(new ImageCompressedInfoModel(image, file));
         }

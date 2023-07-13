@@ -19,13 +19,16 @@ namespace BusinessCardGenerator.API.Services
         public TokenService(IConfiguration configuration)
         {
             var jwtSettings = configuration.GetSection("JwtSettings") ??
-                          throw new InvalidOperationException("'JwtSettings' not found.");
+                              throw new InvalidOperationException("'JwtSettings' not found.");
 
             issuer = jwtSettings["Issuer"] ?? throw new InvalidOperationException("JWT Issuer not found!");
+            
             audience = jwtSettings["Audience"] ?? throw new InvalidOperationException("JWT Audience not found!");
+            
             secretKey = jwtSettings["SecretKey"] ?? throw new InvalidOperationException("JWT SecretKey not found!");
+            
             expirationMinutes = double.Parse(jwtSettings["ExpirationMinutes"] ??
-                                             throw new InvalidOperationException("JWT ExpirationMinutes not found!"));
+                                throw new InvalidOperationException("JWT ExpirationMinutes not found!"));
         }
 
         public string GenerateNewToken(User user)

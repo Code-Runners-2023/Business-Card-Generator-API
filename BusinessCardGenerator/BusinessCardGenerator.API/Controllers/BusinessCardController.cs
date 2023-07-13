@@ -34,7 +34,7 @@ namespace BusinessCardGenerator.API.Controllers
                                                                        .GetAll(userId)
                                                                        .Select(bcard => 
                                                                                new BusinessCardCompressedInfoModel(bcard,
-                                                                               azureCloudService.GetFileFromCloud(bcard.Id)))
+                                                                               azureCloudService.GetFileFromCloud(bcard.Id, bcard.LogoFileExtension)))
                                                                        .ToList();
 
             return Ok(compressedBcards);
@@ -51,7 +51,7 @@ namespace BusinessCardGenerator.API.Controllers
 
             BusinessCard bcard = bcardService.GetById(bcardId);
 
-            byte[] logoFile = azureCloudService.GetFileFromCloud(bcard.Id);
+            byte[] logoFile = azureCloudService.GetFileFromCloud(bcard.Id, bcard.LogoFileExtension);
 
             return Ok(new BusinessCardCompressedInfoModel(bcard, logoFile));
         }
@@ -74,12 +74,13 @@ namespace BusinessCardGenerator.API.Controllers
                 Name = userInput.Name,
                 Address = userInput.Address,
                 Website = userInput.Website,
+                LogoFileExtension = Path.GetExtension(userInput.LogoFile.FileName),
                 HexColorCodeMain = userInput.HexColorCodeMain,
                 HexColorCodeSecondary = userInput.HexColorCodeSecondary
             };
 
             bcardService.Add(bcard);
-            azureCloudService.SaveFileInCloud(bcardId, userInput.LogoFile);
+            azureCloudService.UploadFileInCloud(bcardId, userInput.LogoFile);
 
             return NoContent();
         }
@@ -99,7 +100,7 @@ namespace BusinessCardGenerator.API.Controllers
             bcard.ApplyChanges(model);
 
             bcardService.Update(bcard);
-            azureCloudService.UpdateFileInCloud(bcardId, model.LogoFile);
+            azureCloudService.UpdateFileInCloud(bcardId, bcard.LogoFileExtension, model.LogoFile);
 
             return NoContent();
         }
@@ -115,7 +116,7 @@ namespace BusinessCardGenerator.API.Controllers
             if (removed == null)
                 return BadRequest();
 
-            byte[] logoFile = azureCloudService.DeleteFileFromCloud(bcardId);
+            byte[] logoFile = azureCloudService.DeleteFileFromCloud(bcardId, removed.LogoFileExtension);
 
             return Ok(new BusinessCardCompressedInfoModel(removed, logoFile));
         }

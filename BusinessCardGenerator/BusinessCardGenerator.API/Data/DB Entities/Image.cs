@@ -14,9 +14,6 @@ namespace BusinessCardGenerator.API.Data
 
         public User User { get; set; }
 
-        public string FileName { get; set; }
-
-        // In bytes
-        public long Length { get; set; }
+        public string FileExtension { get; set; }
     }
 }

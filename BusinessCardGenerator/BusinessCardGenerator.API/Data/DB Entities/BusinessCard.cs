@@ -13,6 +13,7 @@ namespace BusinessCardGenerator.API.Data
             Name = model.Name;
             Address = model.Address;
             Website = model.Website;
+            LogoFileExtension = Path.GetExtension(model.LogoFile.FileName);
             HexColorCodeMain = model.HexColorCodeMain;
             HexColorCodeSecondary = model.HexColorCodeSecondary;
         }
@@ -34,6 +35,8 @@ namespace BusinessCardGenerator.API.Data
 
         [Url]
         public string Website { get; set; }
+
+        public string LogoFileExtension { get; set; }
 
         public string HexColorCodeMain { get; set; }
 
