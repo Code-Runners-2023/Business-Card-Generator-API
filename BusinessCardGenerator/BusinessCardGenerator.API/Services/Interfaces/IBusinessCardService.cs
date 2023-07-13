@@ -15,5 +15,7 @@ namespace BusinessCardGenerator.API.Services.Interfaces
         void Update(BusinessCard bcard);
 
         BusinessCard Remove(Guid userId, Guid bcardId);
+
+        void RemoveAll(Guid userId);
     }
 }

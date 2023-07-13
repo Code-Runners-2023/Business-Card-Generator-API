@@ -6,6 +6,8 @@ namespace BusinessCardGenerator.API.Services.Interfaces
     {
         List<Transaction> GetAllUserTransactions(Guid userId);
 
+        List<Transaction> GetAllByBcardId(Guid bcardId);
+
         Transaction GetById(Guid transactionId);
 
         Transaction GetByBcardId(Guid bcardId);
@@ -13,5 +15,9 @@ namespace BusinessCardGenerator.API.Services.Interfaces
         bool CheckIfUserIsOwner(Guid userId, Guid transactionId);
 
         bool Add(Transaction transaction);
+
+        void RemoveAllWithBcardId(Guid bcardId);
+
+        void RemoveAllUserTransactions(Guid userId);
     }
 }

@@ -29,10 +29,10 @@ namespace BusinessCardGenerator.API.Controllers
                 return BadRequest();
 
             List<DepositCompressedInfoModel> compressedBcards = depositService
-                                                                       .GetAllUserDeposits(userId)
-                                                                       .Select(deposit =>
-                                                                               new DepositCompressedInfoModel(deposit))
-                                                                       .ToList();
+                                                                .GetAllUserDeposits(userId)
+                                                                .Select(deposit =>
+                                                                        new DepositCompressedInfoModel(deposit))
+                                                                .ToList();
 
             return Ok(compressedBcards);
         }

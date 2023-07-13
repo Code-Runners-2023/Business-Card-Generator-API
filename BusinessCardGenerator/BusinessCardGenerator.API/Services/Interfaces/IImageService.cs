@@ -13,5 +13,7 @@ namespace BusinessCardGenerator.API.Services.Interfaces
         void Add(Image image);
 
         Image Remove(Guid userId, Guid imageId);
+
+        void RemoveAll(Guid userId);
     }
 }

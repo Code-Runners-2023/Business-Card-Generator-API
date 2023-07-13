@@ -11,16 +11,19 @@ namespace BusinessCardGenerator.API.Controllers
     public class BusinessCardController : ControllerBase
     {
         private readonly IBusinessCardService bcardService;
+        private readonly ITransactionService transactionService;
         private readonly IUserService userService;
         private readonly IAzureCloudService azureCloudService;
         private readonly ApplicationSettings settings;
 
         private readonly string[] allowedFileContentTypes = { "image/jpeg", "image/png" };
 
-        public BusinessCardController(IBusinessCardService bcardService, IUserService userService,
-                                      IAzureCloudService azureCloudService, IConfiguration config)
+        public BusinessCardController(IBusinessCardService bcardService, ITransactionService transactionService,
+                                      IUserService userService, IAzureCloudService azureCloudService,
+                                      IConfiguration config)
         {
             this.bcardService = bcardService;
+            this.transactionService = transactionService;
             this.userService = userService;
             this.azureCloudService = azureCloudService;
             settings = new ApplicationSettings(config);
@@ -95,10 +98,11 @@ namespace BusinessCardGenerator.API.Controllers
             if (bcard == null)
                 return NotFound();
 
+            string oldLogoFileExtention = bcard.LogoFileExtension;
             bcard.ApplyChanges(model);
 
             bcardService.Update(bcard);
-            azureCloudService.UpdateFileInCloud(bcardId, bcard.LogoFileExtension, model.LogoFile);
+            azureCloudService.UpdateFileInCloud(bcardId, oldLogoFileExtention, model.LogoFile);
 
             return NoContent();
         }
@@ -114,6 +118,7 @@ namespace BusinessCardGenerator.API.Controllers
             if (removed == null)
                 return BadRequest();
 
+            transactionService.RemoveAllWithBcardId(removed.Id);
             azureCloudService.DeleteFileFromCloud(bcardId, removed.LogoFileExtension);
 
             return Ok();

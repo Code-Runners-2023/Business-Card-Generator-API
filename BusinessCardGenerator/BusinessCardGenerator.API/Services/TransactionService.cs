@@ -19,6 +19,12 @@ namespace BusinessCardGenerator.API.Services
                       .Where(transaction => transaction.BusinessCard.UserId.Equals(userId))
                       .ToList();
 
+        public List<Transaction> GetAllByBcardId(Guid bcardId)
+            => context.Transactions
+                      .Include(transaction => transaction.BusinessCard)
+                      .Where(transaction => transaction.BusinessCardId.Equals(bcardId))
+                      .ToList();
+
         public Transaction GetById(Guid transactionId)
             => context.Transactions
                       .Include(transaction => transaction.BusinessCard)
@@ -42,6 +48,18 @@ namespace BusinessCardGenerator.API.Services
             context.SaveChanges();
 
             return true;
+        }
+
+        public void RemoveAllWithBcardId(Guid bcardId)
+        {
+            GetAllByBcardId(bcardId).ForEach(transaction => context.Transactions.Remove(transaction));
+            context.SaveChanges();
+        }
+
+        public void RemoveAllUserTransactions(Guid userId)
+        {
+            GetAllUserTransactions(userId).ForEach(transaction => context.Transactions.Remove(transaction));
+            context.SaveChanges();
         }
     }
 }

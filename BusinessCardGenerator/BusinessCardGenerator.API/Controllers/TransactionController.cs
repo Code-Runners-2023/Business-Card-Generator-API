@@ -51,18 +51,18 @@ namespace BusinessCardGenerator.API.Controllers
             return Ok(new TransactionCompressedInfoModel(transaction));
         }
 
-        [HttpGet("bcards/{bcardId}/transaction"), Authorize]
+        [HttpGet("bcards/{bcardId}/transactions"), Authorize]
         public IActionResult GetBcardTransaction(Guid userId, Guid bcardId)
         {
             if (!bcardService.CheckIfUserIsOwner(userId, bcardId))
                 return BadRequest();
 
-            Transaction transaction = transactionService.GetByBcardId(bcardId);
+            List<TransactionCompressedInfoModel> compressedTransactions = transactionService
+                                                                          .GetAllByBcardId(bcardId)
+                                                                          .Select(transaction => new TransactionCompressedInfoModel(transaction))
+                                                                          .ToList();
 
-            if (transaction == null)
-                return NotFound();
-
-            return Ok(new TransactionCompressedInfoModel(transaction));
+            return Ok(compressedTransactions);
         }
 
         [HttpPost("transactions"), Authorize]

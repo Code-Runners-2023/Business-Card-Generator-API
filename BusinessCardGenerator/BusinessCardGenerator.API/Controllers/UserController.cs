@@ -12,11 +12,21 @@ namespace BusinessCardGenerator.API.Controllers
     {
         private readonly IUserService userService;
         private readonly ITokenService tokenService;
+        private readonly IBusinessCardService bcardService;
+        private readonly ITransactionService transactionService;
+        private readonly IImageService imageService;
+        private readonly IDepositService depositService;
 
-        public UserController(IUserService userService, ITokenService tokenService)
+        public UserController(IUserService userService, ITokenService tokenService,
+                              IBusinessCardService bcardService, ITransactionService transactionService,
+                              IImageService imageService, IDepositService depositService)
         {
             this.userService = userService;
             this.tokenService = tokenService;
+            this.bcardService = bcardService;
+            this.transactionService = transactionService;
+            this.imageService = imageService;
+            this.depositService = depositService;
         }
 
         [HttpGet, Authorize]
@@ -101,6 +111,11 @@ namespace BusinessCardGenerator.API.Controllers
 
             if (removed == null)
                 return BadRequest();
+
+            transactionService.RemoveAllUserTransactions(removed.Id);
+            bcardService.RemoveAll(removed.Id);
+            imageService.RemoveAll(removed.Id);
+            depositService.RemoveAllUserDeposits(removed.Id);
 
             return Ok(new UserCompressedInfoModel(removed));
         }

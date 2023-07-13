@@ -47,5 +47,11 @@ namespace BusinessCardGenerator.API.Services
 
             return image;
         }
+
+        public void RemoveAll(Guid userId)
+        {
+            GetAll(userId).ForEach(image => context.Images.Remove(image));
+            context.SaveChanges();
+        }
     }
 }

@@ -11,5 +11,7 @@ namespace BusinessCardGenerator.API.Services.Interfaces
         bool CheckIfUserIsOwner(Guid userId, Guid depositId);
 
         bool Add(Deposit deposit);
+
+        void RemoveAllUserDeposits(Guid userId);
     }
 }

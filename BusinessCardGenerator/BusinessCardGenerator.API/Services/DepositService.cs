@@ -39,5 +39,11 @@ namespace BusinessCardGenerator.API.Services
 
             return true;
         }
+
+        public void RemoveAllUserDeposits(Guid userId)
+        {
+            GetAllUserDeposits(userId).ForEach(deposit => context.Deposits.Remove(deposit));
+            context.SaveChanges();
+        }
     }
 }
