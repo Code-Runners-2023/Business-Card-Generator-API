@@ -1,4 +1,5 @@
 ﻿using BusinessCardGenerator.API.Data;
+using BusinessCardGenerator.API.Models.Image;
 using BusinessCardGenerator.API.Models.User;
 using BusinessCardGenerator.API.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -16,10 +17,11 @@ namespace BusinessCardGenerator.API.Controllers
         private readonly ITransactionService transactionService;
         private readonly IImageService imageService;
         private readonly IDepositService depositService;
+        private readonly IAzureCloudService azureCloudService;
 
         public UserController(IUserService userService, ITokenService tokenService,
                               IBusinessCardService bcardService, ITransactionService transactionService,
-                              IImageService imageService, IDepositService depositService)
+                              IImageService imageService, IDepositService depositService, IAzureCloudService azureCloudService)
         {
             this.userService = userService;
             this.tokenService = tokenService;
@@ -27,6 +29,7 @@ namespace BusinessCardGenerator.API.Controllers
             this.transactionService = transactionService;
             this.imageService = imageService;
             this.depositService = depositService;
+            this.azureCloudService = azureCloudService;
         }
 
         [HttpGet, Authorize]
@@ -107,15 +110,19 @@ namespace BusinessCardGenerator.API.Controllers
         [HttpDelete("{id}"), Authorize]
         public IActionResult RemoveUserById(Guid id)
         {
-            User removed = userService.Remove(id);
-
-            if (removed == null)
+            if (userService.GetById(id) == null)
                 return BadRequest();
 
-            transactionService.RemoveAllUserTransactions(removed.Id);
-            bcardService.RemoveAll(removed.Id);
-            imageService.RemoveAll(removed.Id);
-            depositService.RemoveAllUserDeposits(removed.Id);
+            List<ImageAzureFileModel> azureBcardFiles = bcardService.RemoveAll(id);
+            azureBcardFiles.ForEach(file => azureCloudService.DeleteFileFromCloud(file.Id, file.FileExtension));
+
+            List<ImageAzureFileModel> azureImageFiles = imageService.RemoveAll(id);
+            azureImageFiles.ForEach(file => azureCloudService.DeleteFileFromCloud(file.Id, file.FileExtension));
+            
+            depositService.RemoveAllUserDeposits(id);
+            transactionService.RemoveAllUserTransactions(id);
+
+            User removed = userService.Remove(id);
 
             return Ok(new UserCompressedInfoModel(removed));
         }

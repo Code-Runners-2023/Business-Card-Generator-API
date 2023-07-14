@@ -1,4 +1,5 @@
 ﻿using BusinessCardGenerator.API.Data;
+using BusinessCardGenerator.API.Models.Image;
 using BusinessCardGenerator.API.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -48,10 +49,21 @@ namespace BusinessCardGenerator.API.Services
             return image;
         }
 
-        public void RemoveAll(Guid userId)
+        public List<ImageAzureFileModel> RemoveAll(Guid userId)
         {
-            GetAll(userId).ForEach(image => context.Images.Remove(image));
+            List<Image> images = GetAll(userId);
+
+            foreach(var image in images)
+            {
+                context.Images.Remove(image);
+            }
+
             context.SaveChanges();
+
+            List<ImageAzureFileModel> azureFiles = images.Select(image => new ImageAzureFileModel(image))
+                                                         .ToList();
+
+            return azureFiles;
         }
     }
 }

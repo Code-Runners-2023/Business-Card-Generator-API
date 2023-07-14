@@ -1,4 +1,5 @@
 ﻿using BusinessCardGenerator.API.Data;
+using BusinessCardGenerator.API.Models.Image;
 
 namespace BusinessCardGenerator.API.Services.Interfaces
 {
@@ -14,6 +15,6 @@ namespace BusinessCardGenerator.API.Services.Interfaces
 
         Image Remove(Guid userId, Guid imageId);
 
-        void RemoveAll(Guid userId);
+        List<ImageAzureFileModel> RemoveAll(Guid userId);
     }
 }

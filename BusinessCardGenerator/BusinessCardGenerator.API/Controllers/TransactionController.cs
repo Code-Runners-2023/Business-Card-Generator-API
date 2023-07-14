@@ -71,7 +71,7 @@ namespace BusinessCardGenerator.API.Controllers
             User user = userService.GetById(userId);
             BusinessCard bcard = bcardService.GetById(newTransaction.BusinessCardId);
 
-            if (user == null || bcard == null)
+            if (user == null || bcard == null || (user.Balance - Math.Abs(newTransaction.Amount) < 0))
                 return BadRequest();
 
             Transaction transaction = new Transaction()
@@ -85,6 +85,9 @@ namespace BusinessCardGenerator.API.Controllers
 
             if (!transactionService.Add(transaction))
                 return BadRequest();
+
+            user.Balance -= newTransaction.Amount;
+            userService.Update(user);
 
             return NoContent();
         }

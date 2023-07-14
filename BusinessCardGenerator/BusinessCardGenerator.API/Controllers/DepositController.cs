@@ -73,6 +73,9 @@ namespace BusinessCardGenerator.API.Controllers
             if (!depositService.Add(deposit))
                 return BadRequest();
 
+            user.Balance += newDeposit.Amount;
+            userService.Update(user);
+
             return NoContent();
         }
     }
