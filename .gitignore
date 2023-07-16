@@ -1,3 +1,9 @@
 BusinessCardGenerator/.vs/
 BusinessCardGenerator/BusinessCardGenerator.API/bin/
 BusinessCardGenerator/BusinessCardGenerator.API/obj/
+<<<<<<< HEAD
+=======
+BusinessCardGenerator/BusinessCardGenerator.API/appsettings.json
+BusinessCardGenerator/BusinessCardGenerator.API/appsettings.Development.json
+zadachi.txt
+>>>>>>> dev
