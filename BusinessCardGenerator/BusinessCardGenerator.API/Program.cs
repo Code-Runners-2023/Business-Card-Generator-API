@@ -1,12 +1,3 @@
-<<<<<<< HEAD
-var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-=======
 using BusinessCardGenerator.API.Data;
 using BusinessCardGenerator.API.Services;
 using BusinessCardGenerator.API.Services.Interfaces;
@@ -91,7 +82,6 @@ builder.Services.AddScoped<IDepositService, DepositService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<IAzureCloudService, AzureCloudService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
->>>>>>> dev
 
 var app = builder.Build();
 
@@ -105,17 +95,12 @@ if (app.Environment.IsDevelopment())
     app.UseExceptionHandler();
 }
 
-<<<<<<< HEAD
-app.UseHttpsRedirection();
-
-=======
 app.UseCors();
 
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
 
->>>>>>> dev
 app.UseAuthorization();
 
 app.MapControllers();
